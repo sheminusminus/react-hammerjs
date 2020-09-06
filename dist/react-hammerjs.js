@@ -7,6 +7,8 @@
 PropTypes = PropTypes && PropTypes.hasOwnProperty('default') ? PropTypes['default'] : PropTypes;
 React = React && React.hasOwnProperty('default') ? React['default'] : React;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -111,6 +113,29 @@ function updateHammer(hammer, props) {
 	});
 }
 
+// class ErrorBoundary extends React.Component {
+// 	state = {
+// 		error: null,
+// 		errorInfo: null,
+// 	};
+//
+// 	componentDidCatch(error, errorInfo) {
+// 		console.error(error);
+// 		this.setState({ error, errorInfo });
+// 	}
+//
+// 	render() {
+// 		const { children } = this.props;
+// 		const { error } = this.state;
+//
+// 		if (error) {
+// 			return null;
+// 		}
+//
+// 		return children;
+// 	}
+// }
+
 var HammerComponent = function (_React$Component) {
 	_inherits(HammerComponent, _React$Component);
 
@@ -145,6 +170,8 @@ var HammerComponent = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			var props = {};
 
 			Object.keys(this.props).forEach(function (i) {
@@ -153,17 +180,21 @@ var HammerComponent = function (_React$Component) {
 				}
 			}, this);
 
-			var self = this;
-			props.ref = function (domElement) {
-				if (self.props.ref) {
-					self.props.ref(domElement);
+			var onlyChild = React.Children.only(this.props.children);
+
+			props.ref = function (el) {
+				if (typeof onlyChild.props.ref === 'function') {
+					onlyChild.props.ref(el);
+				} else if (_typeof(onlyChild.props.ref) === 'object') {
+					onlyChild.props.ref.current = el;
 				}
-				self.domElement = domElement;
+
+				_this2.domElement = el;
 			};
 
 			// Reuse the child provided
 			// This makes it flexible to use whatever element is wanted (div, ul, etc)
-			return React.cloneElement(React.Children.only(this.props.children), props);
+			return React.cloneElement(onlyChild, props);
 		}
 	}]);
 
@@ -174,6 +205,17 @@ HammerComponent.displayName = 'Hammer';
 HammerComponent.propTypes = {
 	className: PropTypes.string
 };
+
+
+
+
+// const HammerComponentWithErrorBoundary = (props) => (
+// 	<ErrorBoundary>
+// 		<HammerComponent {...props} />
+// 	</ErrorBoundary>
+// );
+//
+// export default HammerComponentWithErrorBoundary;
 
 return HammerComponent;
 
