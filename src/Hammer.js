@@ -24,6 +24,7 @@ const handlerToEvent = {
 	onPan: 'pan',
 	onPanCancel: 'pancancel',
 	onPanEnd: 'panend',
+	onPanMove: 'panmove',
 	onPanStart: 'panstart',
 	onPinch: 'pinch',
 	onPinchCancel: 'pinchcancel',
@@ -62,6 +63,12 @@ function updateHammer(hammer, props) {
 			: props.vertical ? 'DIRECTION_ALL' : 'DIRECTION_HORIZONTAL';
 		hammer.get('pan').set({ direction: Hammer[direction] });
 		hammer.get('swipe').set({ direction: Hammer[direction] });
+	}
+
+	const threshold = props.threshold;
+	if (typeof threshold === 'number') {
+		hammer.get('pan').set({ threshold });
+		hammer.get('swipe').set({ threshold });
 	}
 
 	if (props.options) {
