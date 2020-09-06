@@ -14,3 +14,7 @@ coverage
 # Dependency directory
 node_modules
 yarn.lock
+
+.idea
+
+.DS_Store
